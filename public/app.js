@@ -350,7 +350,7 @@ function renderAdminInventory() {
     }
 
     container.innerHTML = products.map(p => `
-        <div style="display: flex; justify-content: space-between; align-items: center; padding: 0.75rem; border-bottom: 1px solid #e2e8f0;">
+        <div class="admin-inventory-item" style="display: flex; justify-content: space-between; align-items: center; padding: 0.75rem; border-bottom: 1px solid #e2e8f0;">
             <div style="display: flex; align-items: center; gap: 0.75rem;">
                 <img src="${p.image}" style="width: 40px; height: 40px; object-fit: cover; border-radius: 4px;">
                 <div>
@@ -358,7 +358,9 @@ function renderAdminInventory() {
                     <div style="font-size: 0.8rem; color: #64748b;">${p.category} — $${p.price.toFixed(2)}</div>
                 </div>
             </div>
-            <button onclick="deleteProduct('${p._id}')" style="background: #ef4444; color: white; border: none; padding: 0.4rem 0.8rem; border-radius: 4px; cursor: pointer;">Delete</button>
+            <div class="item-actions">
+                <button onclick="deleteProduct('${p._id}')" style="background: #ef4444; color: white; border: none; padding: 0.4rem 0.8rem; border-radius: 4px; cursor: pointer;">Delete</button>
+            </div>
         </div>
     `).join('');
 }

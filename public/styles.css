@@ -1000,3 +1000,125 @@ body {
         padding: 0.6rem 0;
     }
 }
+
+/* ==================== Comprehensive Responsive Styles ==================== */
+
+/* Tablet & Mobile Layout Adjustments (Under 768px) */
+@media (max-width: 768px) {
+    /* Navbar adjustments */
+    .nav-container {
+        flex-wrap: wrap;
+        padding: 0.75rem 1rem;
+    }
+
+    .search-bar {
+        order: 3;
+        width: 100%;
+        max-width: 100%;
+        margin-top: 0.4rem;
+    }
+
+    /* Product Grid adjustments */
+    .product-grid {
+        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+        gap: 1rem;
+    }
+
+    /* Modals & Detail Grids */
+    .detail-grid,
+    .product-detail-layout {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+
+    .detail-grid img,
+    .detail-image-container img {
+        height: 200px;
+    }
+
+    /* Admin Modal Adjustments */
+    .admin-modal-box {
+        width: 95%;
+        padding: 1rem;
+    }
+
+    .admin-form-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .admin-kpi-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 0.75rem;
+    }
+
+    .admin-inventory-item {
+        flex-direction: column;
+        align-items: flex-start !important;
+        gap: 0.75rem;
+    }
+
+    .admin-inventory-item .item-actions {
+        width: 100%;
+        display: flex;
+        justify-content: flex-end;
+    }
+
+    .admin-inventory-item button {
+        width: 100%;
+        padding: 0.6rem 0;
+    }
+}
+
+/* Smartphone Adjustments (Under 480px) */
+@media (max-width: 480px) {
+    .product-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .cart-drawer {
+        width: 100%;
+        max-width: 100%;
+    }
+
+    .user-pill span {
+        display: none; /* Hide text label on tiny screens */
+    }
+
+    .profile-info-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .profile-header-card {
+        flex-direction: column;
+        text-align: center;
+        gap: 0.75rem;
+    }
+
+    .modal-content,
+    .product-modal-box,
+    .profile-modal-box {
+        padding: 1rem;
+    }
+
+    #toast-container {
+        left: 10px;
+        right: 10px;
+    }
+}
+
+/* Fix Modal Close Button on Small Devices */
+@media (max-width: 640px) {
+    .modal-content {
+        padding-top: 2.5rem; /* Prevents content from sliding under the close button */
+    }
+
+    .modal-close {
+        position: sticky;
+        top: 0;
+        float: right;
+        margin-top: -1.5rem;
+        margin-right: -0.5rem;
+        z-index: 10;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+    }
+}
