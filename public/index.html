@@ -1,58 +1,171 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CodeAlpha Store</title>
+    <title>AURA — Premium Store</title>
     <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
+
 <body>
+
+    <!-- Toast Notification Container -->
+    <div id="toast-container"></div>
+
+    <!-- Navigation Header -->
     <header class="navbar">
-        <div class="logo">CodeAlpha Store</div>
-        <nav>
-            <button onclick="showSection('products-section')">Products</button>
-            <button onclick="showSection('cart-section')">Cart (<span id="cart-count">0</span>)</button>
-            <button onclick="showSection('auth-section')" id="auth-btn">Login / Register</button>
-        </nav>
+        <div class="nav-container">
+            <a href="#" class="brand-logo"><i class="fa-solid fa-bag-shopping"></i> AURA</a>
+            <div class="search-bar">
+                <i class="fa-solid fa-magnifying-glass"></i>
+                <input type="text" id="search-input" placeholder="Search products..." onkeyup="handleSearch()">
+            </div>
+            <div class="nav-actions">
+                <div id="user-info" class="user-pill">
+                    <button class="btn-text" onclick="openAuthModal()"><i class="fa-regular fa-user"></i> Login</button>
+                </div>
+                <button class="cart-trigger" onclick="toggleCart()">
+                    <i class="fa-solid fa-cart-shopping"></i>
+                    <span class="badge" id="cart-count">0</span>
+                </button>
+            </div>
+        </div>
     </header>
 
-    <main class="container">
-        <!-- Product List -->
-        <section id="products-section" class="active">
-            <h2>Featured Products</h2>
-            <div id="product-list" class="grid"></div>
-        </section>
-
-        <!-- Product Detail Modal View -->
-        <section id="product-detail-section" class="hidden">
-            <button onclick="showSection('products-section')">&larr; Back to Products</button>
-            <div id="product-detail-card" class="detail-card"></div>
-        </section>
-
-        <!-- Cart Section -->
-        <section id="cart-section" class="hidden">
-            <h2>Your Shopping Cart</h2>
-            <div id="cart-items"></div>
-            <div class="cart-summary">
-                <h3>Total: $<span id="cart-total">0.00</span></h3>
-                <button class="btn-primary" onclick="checkout()">Checkout</button>
+    <!-- Main Storefront -->
+    <main class="main-layout">
+        <!-- Hero Section -->
+        <section class="hero-banner">
+            <div class="hero-text">
+                <span class="tag">Next-Gen Storefront</span>
+                <h1>Elevate Your Lifestyle With Premium Goods.</h1>
+                <p>Handpicked electronics, furniture, and apparel built for maximum comfort and style.</p>
             </div>
         </section>
 
-        <!-- Auth Section -->
-        <section id="auth-section" class="hidden">
-            <div class="auth-box">
-                <h2>User Account</h2>
-                <input type="text" id="username" placeholder="Username">
-                <input type="password" id="password" placeholder="Password">
-                <div class="auth-actions">
-                    <button class="btn-primary" onclick="login()">Login</button>
-                    <button class="btn-secondary" onclick="register()">Register</button>
-                </div>
-            </div>
+        <!-- Category Filters -->
+        <div class="filter-bar">
+            <button class="filter-btn active" onclick="filterCategory('All', this)">All Products</button>
+            <button class="filter-btn" onclick="filterCategory('Electronics', this)">Electronics</button>
+            <button class="filter-btn" onclick="filterCategory('Furniture', this)">Furniture</button>
+            <button class="filter-btn" onclick="filterCategory('Fashion', this)">Fashion</button>
+        </div>
+
+        <!-- Product Grid -->
+        <section class="product-grid" id="product-grid">
+            <!-- Dynamic Injection -->
         </section>
     </main>
 
+    <!-- Side Cart Drawer -->
+    <div class="cart-overlay" id="cart-overlay" onclick="toggleCart()"></div>
+    <aside class="cart-drawer" id="cart-drawer">
+        <div class="drawer-header">
+            <h3>Your Shopping Cart</h3>
+            <button class="close-btn" onclick="toggleCart()">&times;</button>
+        </div>
+        <div class="drawer-body" id="cart-items-container">
+            <!-- Cart Items Injected -->
+        </div>
+        <div class="drawer-footer">
+            <div class="summary-row">
+                <span>Subtotal</span>
+                <span id="cart-subtotal">$0.00</span>
+            </div>
+            <div class="summary-row grand-total">
+                <span>Total</span>
+                <span id="cart-total">$0.00</span>
+            </div>
+            <button class="checkout-btn" onclick="processCheckout()">Checkout Now</button>
+        </div>
+    </aside>
+
+    <!-- Product Detail Modal -->
+    <div class="modal-overlay" id="detail-modal">
+        <div class="modal-content product-detail-modal">
+            <button class="modal-close" onclick="closeModal('detail-modal')">&times;</button>
+            <div id="product-detail-body" class="detail-grid"></div>
+        </div>
+    </div>
+
+    <!-- Auth Modal -->
+    <div class="modal-overlay" id="auth-modal">
+        <div class="modal-content auth-modal-box">
+            <button class="modal-close" onclick="closeModal('auth-modal')">&times;</button>
+            <div class="auth-tabs">
+                <button class="tab-btn active" id="tab-login" onclick="switchAuthTab('login')">Sign In</button>
+                <button class="tab-btn" id="tab-register" onclick="switchAuthTab('register')">Register</button>
+            </div>
+
+            <form id="auth-form" onsubmit="handleAuth(event)">
+                <div class="input-group">
+                    <label>Username</label>
+                    <input type="text" id="auth-username" required placeholder="e.g. alex99">
+                </div>
+                <div class="input-group">
+                    <label>Password</label>
+                    <input type="password" id="auth-password" required placeholder="••••••••">
+                </div>
+
+                <!-- Registration-Specific Fields -->
+                <div id="register-extra-fields" style="display: none;">
+                    <div class="input-group">
+                        <label>Country</label>
+                        <input type="text" id="auth-country" placeholder="e.g. United States">
+                    </div>
+                    <div class="input-group">
+                        <label>Postal Address</label>
+                        <input type="text" id="auth-address" placeholder="e.g. 123 Main St, Apt 4B, New York, NY 10001">
+                    </div>
+                </div>
+
+                <button type="submit" class="auth-submit-btn" id="auth-submit-text">Log In</button>
+            </form>
+        </div>
+    </div>
+
+   <!-- Responsive Profile Modal -->
+<div class="modal-overlay" id="profile-modal">
+    <div class="modal-content profile-modal-box">
+        <button class="modal-close" onclick="closeModal('profile-modal')">&times;</button>
+        
+        <!-- Header Profile Card -->
+        <div class="profile-header-card">
+            <div class="profile-avatar" id="profile-avatar-letter">U</div>
+            <div class="profile-details">
+                <h3 id="profile-username-title">Username</h3>
+                <span class="profile-badge">Verified Customer</span>
+            </div>
+        </div>
+
+        <!-- Info Grid -->
+        <div class="profile-info-grid">
+            <div class="info-card">
+                <label><i class="fa-solid fa-globe"></i> Country</label>
+                <p id="profile-country-val">-</p>
+            </div>
+            <div class="info-card">
+                <label><i class="fa-solid fa-location-dot"></i> Shipping Address</label>
+                <p id="profile-address-val">-</p>
+            </div>
+        </div>
+
+        <!-- Orders Title & Container -->
+        <div class="orders-section-title">
+            <span><i class="fa-solid fa-box-archive"></i> Order History</span>
+            <span class="order-count-badge" id="profile-order-count">0 Orders</span>
+        </div>
+
+        <div class="orders-list" id="profile-orders">
+            <!-- Orders dynamically injected here -->
+        </div>
+    </div>
+</div>
+
     <script src="app.js"></script>
 </body>
+
 </html>
