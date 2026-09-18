@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CodeAlpha Store</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header class="navbar">
+        <div class="logo">CodeAlpha Store</div>
+        <nav>
+            <button onclick="showSection('products-section')">Products</button>
+            <button onclick="showSection('cart-section')">Cart (<span id="cart-count">0</span>)</button>
+            <button onclick="showSection('auth-section')" id="auth-btn">Login / Register</button>
+        </nav>
+    </header>
+
+    <main class="container">
+        <!-- Product List -->
+        <section id="products-section" class="active">
+            <h2>Featured Products</h2>
+            <div id="product-list" class="grid"></div>
+        </section>
+
+        <!-- Product Detail Modal View -->
+        <section id="product-detail-section" class="hidden">
+            <button onclick="showSection('products-section')">&larr; Back to Products</button>
+            <div id="product-detail-card" class="detail-card"></div>
+        </section>
+
+        <!-- Cart Section -->
+        <section id="cart-section" class="hidden">
+            <h2>Your Shopping Cart</h2>
+            <div id="cart-items"></div>
+            <div class="cart-summary">
+                <h3>Total: $<span id="cart-total">0.00</span></h3>
+                <button class="btn-primary" onclick="checkout()">Checkout</button>
+            </div>
+        </section>
+
+        <!-- Auth Section -->
+        <section id="auth-section" class="hidden">
+            <div class="auth-box">
+                <h2>User Account</h2>
+                <input type="text" id="username" placeholder="Username">
+                <input type="password" id="password" placeholder="Password">
+                <div class="auth-actions">
+                    <button class="btn-primary" onclick="login()">Login</button>
+                    <button class="btn-secondary" onclick="register()">Register</button>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <script src="app.js"></script>
+</body>
+</html>
