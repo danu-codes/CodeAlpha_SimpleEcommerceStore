@@ -83,7 +83,7 @@
         </div>
     </aside>
 
-    <!-- Product Detail Modal -->
+    <!-- Product Detail Modal (Old container kept for fallback safety) -->
     <div class="modal-overlay" id="detail-modal">
         <div class="modal-content product-detail-modal">
             <button class="modal-close" onclick="closeModal('detail-modal')">&times;</button>
@@ -127,43 +127,78 @@
         </div>
     </div>
 
-   <!-- Responsive Profile Modal -->
-<div class="modal-overlay" id="profile-modal">
-    <div class="modal-content profile-modal-box">
-        <button class="modal-close" onclick="closeModal('profile-modal')">&times;</button>
-        
-        <!-- Header Profile Card -->
-        <div class="profile-header-card">
-            <div class="profile-avatar" id="profile-avatar-letter">U</div>
-            <div class="profile-details">
-                <h3 id="profile-username-title">Username</h3>
-                <span class="profile-badge">Verified Customer</span>
+    <!-- Profile Modal -->
+    <div class="modal-overlay" id="profile-modal">
+        <div class="modal-content profile-modal-box">
+            <button class="modal-close" onclick="closeModal('profile-modal')">&times;</button>
+            
+            <!-- Header Profile Card -->
+            <div class="profile-header-card">
+                <div class="profile-avatar" id="profile-avatar-letter">U</div>
+                <div class="profile-details">
+                    <h3 id="profile-username-title">Username</h3>
+                    <span class="profile-badge">Verified Customer</span>
+                </div>
             </div>
-        </div>
 
-        <!-- Info Grid -->
-        <div class="profile-info-grid">
-            <div class="info-card">
-                <label><i class="fa-solid fa-globe"></i> Country</label>
-                <p id="profile-country-val">-</p>
+            <!-- Info Grid -->
+            <div class="profile-info-grid">
+                <div class="info-card">
+                    <label><i class="fa-solid fa-globe"></i> Country</label>
+                    <p id="profile-country-val">-</p>
+                </div>
+                <div class="info-card">
+                    <label><i class="fa-solid fa-location-dot"></i> Address</label>
+                    <p id="profile-address-val">-</p>
+                </div>
             </div>
-            <div class="info-card">
-                <label><i class="fa-solid fa-location-dot"></i> Shipping Address</label>
-                <p id="profile-address-val">-</p>
+
+            <!-- Orders Section -->
+            <div class="orders-section-title">
+                <span><i class="fa-solid fa-box-archive"></i> Order History</span>
+                <span class="order-count-badge" id="profile-order-count">0 Orders</span>
             </div>
-        </div>
 
-        <!-- Orders Title & Container -->
-        <div class="orders-section-title">
-            <span><i class="fa-solid fa-box-archive"></i> Order History</span>
-            <span class="order-count-badge" id="profile-order-count">0 Orders</span>
-        </div>
-
-        <div class="orders-list" id="profile-orders">
-            <!-- Orders dynamically injected here -->
+            <div class="orders-list" id="profile-orders">
+                <!-- Orders injected dynamically -->
+            </div>
         </div>
     </div>
-</div>
+
+    <!-- Product Details Modal -->
+    <div class="modal-overlay" id="product-modal">
+        <div class="modal-content product-modal-box">
+            <button class="modal-close" onclick="closeModal('product-modal')">&times;</button>
+            
+            <div class="product-detail-layout">
+                <div class="detail-image-container">
+                    <img id="detail-img" src="" alt="Product Image">
+                    <span class="detail-category-badge" id="detail-category">Category</span>
+                </div>
+
+                <div class="detail-info-container">
+                    <h2 id="detail-title">Product Title</h2>
+                    <div class="detail-rating" id="detail-rating">★★★★★ (4.8 / 5)</div>
+                    <div class="detail-price" id="detail-price">$0.00</div>
+                    
+                    <p class="detail-description" id="detail-description">
+                        Full product description goes here...
+                    </p>
+
+                    <div class="detail-actions">
+                        <div class="quantity-selector">
+                            <button onclick="adjustDetailQty(-1)">-</button>
+                            <input type="number" id="detail-qty" value="1" min="1" readonly>
+                            <button onclick="adjustDetailQty(1)">+</button>
+                        </div>
+                        <button class="add-btn detail-add-btn" id="detail-add-cart-btn">
+                            <i class="fa-solid fa-cart-plus"></i> Add to Cart
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <script src="app.js"></script>
 </body>

@@ -51,7 +51,10 @@ const Product = mongoose.model('Product', ProductSchema);
 const Order = mongoose.model('Order', OrderSchema);
 
 // Middleware
-app.use(cors());
+app.use(cors({
+    origin: true,
+    credentials: true
+}));
 app.use(express.json());
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(session({
@@ -155,29 +158,49 @@ app.post('/api/checkout', async (req, res) => {
         return res.status(401).json({ error: 'You must be logged in to place an order.' });
     }
 
-    const { items, total } = req.body;
-    if (!items || items.length === 0) return res.status(400).json({ error: 'Cart is empty' });
-
     try {
-        // Fetch full user profile from database to attach snapshot of user details to order
+        // Handle both possible payload keys: { items, total } or { cart }
+        const rawItems = req.body.items || req.body.cart;
+        
+        if (!rawItems || !Array.isArray(rawItems) || rawItems.length === 0) {
+            return res.status(400).json({ error: 'Cart is empty or invalid format.' });
+        }
+
+        // Format items to ensure consistency
+        const items = rawItems.map(item => ({
+            productId: item._id || item.id,
+            name: item.name || item.title,
+            price: item.price,
+            quantity: item.quantity || item.qty || 1
+        }));
+
+        // Calculate total server-side if not explicitly sent
+        const total = req.body.total || items.reduce((sum, i) => sum + (i.price * i.quantity), 0);
+
+        // Fetch full user profile to populate shipping data
         const user = await User.findById(req.session.userId);
-        if (!user) return res.status(404).json({ error: 'User account not found' });
+        if (!user) {
+            return res.status(404).json({ error: 'User account not found.' });
+        }
 
         const newOrder = new Order({
             userId: user._id,
             customerName: user.username,
             shippingAddress: {
-                country: user.country,
-                address: user.address
+                country: user.country || 'N/A',
+                address: user.address || 'N/A'
             },
             items,
-            total
+            total,
+            createdAt: new Date()
         });
 
         await newOrder.save();
         res.status(201).json({ message: 'Order placed successfully!', orderId: newOrder._id });
+
     } catch (err) {
-        res.status(500).json({ error: 'Failed to process order' });
+        console.error('Checkout Endpoint Error:', err);
+        res.status(500).json({ error: 'Failed to process order', details: err.message });
     }
 });
 
