@@ -189,10 +189,20 @@ async function checkSession() {
     const res = await fetch('/api/session', { credentials: 'include' });
     const data = await res.json();
     const userInfo = document.getElementById('user-info');
+
     if (data.loggedIn) {
         userInfo.innerHTML = `
-            <button class="btn-text" onclick="openProfileModal()"><i class="fa-solid fa-circle-user"></i> ${data.username}</button>
-            <button class="btn-text" onclick="logout()" style="color:#ef4444; margin-left:0.3rem;">Logout</button>
+            ${data.isAdmin ? `
+                <button class="btn-text" onclick="openAdminModal()" style="color: #2563eb; font-weight: bold; margin-right: 0.5rem;">
+                    <i class="fa-solid fa-user-shield"></i> Admin Panel
+                </button>
+            ` : ''}
+            <button class="btn-text" onclick="openProfileModal()">
+                <i class="fa-solid fa-circle-user"></i> ${data.username}
+            </button>
+            <button class="btn-text" onclick="logout()" style="color:#ef4444; margin-left:0.3rem;">
+                Logout
+            </button>
         `;
     } else {
         userInfo.innerHTML = `<button class="btn-text" onclick="openAuthModal()"><i class="fa-regular fa-user"></i> Login</button>`;
@@ -309,4 +319,91 @@ function adjustDetailQty(delta) {
     val += delta;
     if (val < 1) val = 1;
     qtyInput.value = val;
+}
+
+async function openAdminModal() {
+    try {
+        // Fetch KPI Overview
+        const statsRes = await fetch('/api/admin/stats', { credentials: 'include' });
+        if (!statsRes.ok) return showToast('Admin access denied.');
+        
+        const stats = await statsRes.json();
+        document.getElementById('admin-kpi-revenue').innerText = `$${stats.revenue.toFixed(2)}`;
+        document.getElementById('admin-kpi-orders').innerText = stats.ordersCount;
+        document.getElementById('admin-kpi-products').innerText = stats.products;
+        document.getElementById('admin-kpi-users').innerText = stats.users;
+
+        // Populate manage products list
+        renderAdminInventory();
+
+        document.getElementById('admin-modal').classList.add('active');
+    } catch (err) {
+        showToast('Error opening Admin dashboard');
+    }
+}
+
+function renderAdminInventory() {
+    const container = document.getElementById('admin-product-list');
+    if (!products || products.length === 0) {
+        container.innerHTML = `<p>No products found.</p>`;
+        return;
+    }
+
+    container.innerHTML = products.map(p => `
+        <div style="display: flex; justify-content: space-between; align-items: center; padding: 0.75rem; border-bottom: 1px solid #e2e8f0;">
+            <div style="display: flex; align-items: center; gap: 0.75rem;">
+                <img src="${p.image}" style="width: 40px; height: 40px; object-fit: cover; border-radius: 4px;">
+                <div>
+                    <strong>${p.name}</strong>
+                    <div style="font-size: 0.8rem; color: #64748b;">${p.category} — $${p.price.toFixed(2)}</div>
+                </div>
+            </div>
+            <button onclick="deleteProduct('${p._id}')" style="background: #ef4444; color: white; border: none; padding: 0.4rem 0.8rem; border-radius: 4px; cursor: pointer;">Delete</button>
+        </div>
+    `).join('');
+}
+
+async function handleCreateProduct(e) {
+    e.preventDefault();
+    const body = {
+        name: document.getElementById('admin-p-name').value,
+        category: document.getElementById('admin-p-category').value,
+        price: parseFloat(document.getElementById('admin-p-price').value),
+        image: document.getElementById('admin-p-image').value,
+        description: document.getElementById('admin-p-desc').value
+    };
+
+    const res = await fetch('/api/admin/products', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify(body)
+    });
+
+    if (res.ok) {
+        showToast('Product added successfully!');
+        document.getElementById('admin-add-product-form').reset();
+        fetchProducts(); // Refresh main store grid
+        openAdminModal(); // Refresh admin modal state
+    } else {
+        const data = await res.json();
+        showToast(data.error || 'Failed to create product');
+    }
+}
+
+async function deleteProduct(id) {
+    if (!confirm('Are you sure you want to delete this product?')) return;
+
+    const res = await fetch(`/api/admin/products/${id}`, {
+        method: 'DELETE',
+        credentials: 'include'
+    });
+
+    if (res.ok) {
+        showToast('Product deleted');
+        fetchProducts();
+        renderAdminInventory();
+    } else {
+        showToast('Failed to delete product');
+    }
 }

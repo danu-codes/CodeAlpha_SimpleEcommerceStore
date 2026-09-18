@@ -22,7 +22,8 @@ const UserSchema = new mongoose.Schema({
     username: { type: String, required: true, unique: true },
     password: { type: String, required: true },
     country: { type: String, required: true },
-    address: { type: String, required: true }
+    address: { type: String, required: true },
+    isAdmin: { type: Boolean, default: false } // Admin flag
 });
 
 const ProductSchema = new mongoose.Schema({
@@ -138,11 +139,21 @@ app.post('/api/login', async (req, res) => {
 });
 
 // 4. Session Check
-app.get('/api/session', (req, res) => {
-    if (req.session.username) {
-        res.json({ loggedIn: true, username: req.session.username });
-    } else {
-        res.json({ loggedIn: false });
+app.get('/api/session', async (req, res) => {
+    if (!req.session.userId) {
+        return res.json({ loggedIn: false });
+    }
+    try {
+        const user = await User.findById(req.session.userId);
+        if (!user) return res.json({ loggedIn: false });
+
+        res.json({
+            loggedIn: true,
+            username: user.username,
+            isAdmin: user.isAdmin || false
+        });
+    } catch (err) {
+        res.status(500).json({ error: 'Session verification failed' });
     }
 });
 
@@ -222,4 +233,69 @@ app.get('/api/profile', async (req, res) => {
 
 app.listen(PORT, () => {
     console.log(`Server live at http://localhost:${PORT}`);
+});
+
+//Admin Guard Middleware
+function requireAdmin(req, res, next) {
+    if (!req.session || !req.session.userId) {
+        return res.status(401).json({ error: 'Unauthorized access.' });
+    }
+    User.findById(req.session.userId).then(user => {
+        if (user && user.isAdmin) {
+            next();
+        } else {
+            res.status(403).json({ error: 'Access denied. Admin privileges required.' });
+        }
+    }).catch(err => res.status(500).json({ error: err.message }));
+}
+
+//Admin: Get Overview Analytics
+app.get('/api/admin/stats', requireAdmin, async (req, res) => {
+    try {
+        const totalUsers = await User.countDocuments();
+        const totalProducts = await Product.countDocuments();
+        const orders = await Order.find();
+        
+        const totalSales = orders.reduce((sum, o) => sum + o.total, 0);
+        
+        res.json({
+            users: totalUsers,
+            products: totalProducts,
+            ordersCount: orders.length,
+            revenue: totalSales
+        });
+    } catch (err) {
+        res.status(500).json({ error: 'Failed to fetch admin stats' });
+    }
+});
+
+//Admin: Add New Product
+app.post('/api/admin/products', requireAdmin, async (req, res) => {
+    try {
+        const newProduct = new Product(req.body);
+        await newProduct.save();
+        res.status(201).json({ message: 'Product created successfully', product: newProduct });
+    } catch (err) {
+        res.status(400).json({ error: 'Failed to create product' });
+    }
+});
+
+// 5. Admin: Delete Product
+app.delete('/api/admin/products/:id', requireAdmin, async (req, res) => {
+    try {
+        await Product.findByIdAndDelete(req.params.id);
+        res.json({ message: 'Product deleted successfully' });
+    } catch (err) {
+        res.status(500).json({ error: 'Failed to delete product' });
+    }
+});
+
+// 6. Admin: Get All Orders
+app.get('/api/admin/orders', requireAdmin, async (req, res) => {
+    try {
+        const orders = await Order.find().sort({ createdAt: -1 });
+        res.json(orders);
+    } catch (err) {
+        res.status(500).json({ error: 'Failed to fetch orders' });
+    }
 });

@@ -200,6 +200,58 @@
         </div>
     </div>
 
+    <!-- Admin Dashboard Modal -->
+<div class="modal-overlay" id="admin-modal">
+    <div class="modal-content admin-modal-box">
+        <button class="modal-close" onclick="closeModal('admin-modal')">&times;</button>
+        
+        <h2 style="margin-bottom: 1.25rem;"><i class="fa-solid fa-user-gear"></i> Admin Control Center</h2>
+
+        <!-- Responsive KPI Metrics Grid -->
+        <div class="admin-kpi-grid">
+            <div class="kpi-card">
+                <small style="color: #64748b;">Total Revenue</small>
+                <h3 id="admin-kpi-revenue" style="color: #10b981;">$0.00</h3>
+            </div>
+            <div class="kpi-card">
+                <small style="color: #64748b;">Total Orders</small>
+                <h3 id="admin-kpi-orders">0</h3>
+            </div>
+            <div class="kpi-card">
+                <small style="color: #64748b;">Active Products</small>
+                <h3 id="admin-kpi-products">0</h3>
+            </div>
+            <div class="kpi-card">
+                <small style="color: #64748b;">Users Registered</small>
+                <h3 id="admin-kpi-users">0</h3>
+            </div>
+        </div>
+
+        <!-- Add Product Form -->
+        <div style="background: #f1f5f9; padding: 1.25rem; border-radius: 8px; margin-bottom: 1.5rem;">
+            <h3>Create New Product</h3>
+            <form id="admin-add-product-form" class="admin-form-grid" onsubmit="handleCreateProduct(event)" style="margin-top: 1rem;">
+                <input type="text" id="admin-p-name" placeholder="Product Title" required style="padding: 0.6rem; border-radius: 4px; border: 1px solid #ccc;">
+                <select id="admin-p-category" required style="padding: 0.6rem; border-radius: 4px; border: 1px solid #ccc;">
+                    <option value="Electronics">Electronics</option>
+                    <option value="Furniture">Furniture</option>
+                    <option value="Fashion">Fashion</option>
+                </select>
+                <input type="number" step="0.01" id="admin-p-price" placeholder="Price ($)" required style="padding: 0.6rem; border-radius: 4px; border: 1px solid #ccc;">
+                <input type="url" id="admin-p-image" placeholder="Image URL" required style="padding: 0.6rem; border-radius: 4px; border: 1px solid #ccc;">
+                <textarea id="admin-p-desc" class="full-width" placeholder="Product Description" style="padding: 0.6rem; border-radius: 4px; border: 1px solid #ccc;"></textarea>
+                <button type="submit" class="full-width" style="background: #2563eb; color: white; border: none; padding: 0.75rem; border-radius: 4px; font-weight: 600; cursor: pointer;">Add Product to Store</button>
+            </form>
+        </div>
+
+        <!-- Inventory List -->
+        <h3>Manage Existing Inventory</h3>
+        <div id="admin-product-list" style="max-height: 250px; overflow-y: auto; margin-top: 1rem;">
+            <!-- Dynamically populated -->
+        </div>
+    </div>
+</div>
+
     <script src="app.js"></script>
 </body>
 
