@@ -1,47 +1,43 @@
-# 🛒 Modern Full-Stack E-Commerce Platform
+# 🛒 AURA — Modern E-Commerce Web Application
 
-A professional, device-responsive full-stack e-commerce web application built using **Node.js, Express, MongoDB Atlas, and Vanilla JavaScript/HTML/CSS**. Features session-based authentication, user profile management, cart persistence, dynamic product filtering, and order history tracking.
-
----
-
-## 🌟 Key Features
-
-* **📱 Responsive Design:** Modern, mobile-first UI with responsive navigation, dynamic grids, and glassmorphism styling.
-* **🔐 Secure Authentication:** User registration and login using **bcrypt** for password hashing and Express sessions for protected routes.
-* **👤 User Profile & Order History:** Dedicated profile dashboard tracking customer addresses and past order metrics.
-* **💳 Session-Protected Checkout:** Secure API routes ensuring only authenticated users can place orders with linked shipping details.
-* **🗃️ Real-Time Database Management:** Automatic seeding of product listings and automated MongoDB schema mapping.
-* **🔍 Search & Category Filtering:** Instant client-side text search and category filtering for high-performance browsing.
+A full-stack, responsive e-commerce web application featuring a modern client interface, secure session-based authentication, user profile management, dynamic cart operations, and a real-time Administrator Control Panel.
 
 ---
 
-## 🛠️ Tech Stack & Architecture
+## ✨ Features
 
-### **Frontend**
-* **HTML5 / CSS3:** Custom CSS with CSS Variables, Flexbox/Grid layouts, and dynamic media queries.
-* **Vanilla JavaScript (ES6+):** Async/Await Fetch API, dynamic DOM manipulation, and modular event listeners.
-* **FontAwesome:** Scalable iconography.
+### 🛍️ Client Experience
+* **Dynamic Product Catalog:** Filter products by category, perform instant text searches, and view item details in dedicated modal windows.
+* **Interactive Shopping Cart:** Slide-out drawer cart with real-time total calculations and item quantity adjustments.
+* **User Accounts & Profiles:** Secure user registration, authentication, profile inspection, and order history tracking.
+* **Responsive Layout:** Designed for seamless usability across desktops, tablets, and smartphones.
 
-### **Backend**
-* **Node.js & Express.js:** RESTful API architecture for authentication, products, orders, and user sessions.
-* **Express-Session:** Session management for secure route handling.
-* **Bcrypt.js:** Industry-standard password hashing algorithm.
+### 🛡️ Administrator Panel
+* **Analytics Dashboard:** Live Key Performance Indicators (KPIs) monitoring total revenue, order count, registered users, and active product inventory.
+* **Inventory Management:** Full CRUD capabilities to list, add, and remove catalog products.
+* **Protected Routes & RBAC:** Express middleware security ensuring non-admin users cannot access administrative endpoints or functions.
 
-### **Database & Cloud**
-* **MongoDB Atlas:** Cloud-hosted NoSQL database.
-* **Mongoose ODM:** Data modeling and schema validation for Users, Products, and Orders.
+---
+
+## 🛠️ Tech Stack
+
+### Frontend
+* **HTML5 & CSS3:** Modern Flexbox/Grid systems, CSS Variables, and custom media queries for responsive UI.
+* **JavaScript (ES6+):** Vanilla JS using Async/Await, Fetch API, dynamic DOM manipulation, and modular architecture.
+* **FontAwesome:** Icons for navigation and status elements.
+
+### Backend
+* **Node.js & Express.js:** RESTful API architecture with express-session authentication.
+* **MongoDB & Mongoose:** NoSQL database schema modeling for users, products, and order data.
 
 ---
 
 ## 📁 Repository Structure
 
 ```text
-.
-├── public/
-│   ├── index.html       # Single-page application template & modal structures
-│   ├── styles.css       # Full responsive styles & UI theme definition
-│   └── app.js           # Client-side API integration & event management
-├── server.js            # Express server, MongoDB schemas, and REST endpoints
-├── package.json         # Dependencies & project scripts
-├── vercel.json          # Deployment configuration (Serverless)
-└── .env                 # Environment variables (git-ignored)
+├── index.html          # Single Page Application entry point & modal definitions
+├── styles.css          # Global design system, layout rules, and media queries
+├── app.js             # Client-side state handling, UI rendering, & API communications
+├── server.js           # Node/Express API routes, middleware, and database connectivity
+├── make-admin.js       # Utility script to promote user roles in MongoDB
+└── README.md           # Project documentation
